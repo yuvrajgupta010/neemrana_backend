@@ -11,6 +11,8 @@ const roomRoutes = require("./routes/rooms");
 
 const app = express();
 
+const PORT = process.env.PORT || 8080;
+
 ////////////////////////////////////////
 // All routes and middleware
 
@@ -21,6 +23,6 @@ app.use(helmet());
 app.use(authRoutes);
 app.use(roomRoutes);
 
-app.listen(4000, () => {
+app.listen(PORT, () => {
   console.log("I am ready!");
 });
