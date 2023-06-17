@@ -5,26 +5,26 @@ const { generateToken } = require("../util/jwt");
 
 exports.getManagementData = (req, res, next) => {
   const { username } = req.tokenData;
-  db.query("select * from management where username = $1", [username]).then(
-    (data) => {
-      const user = data[0];
-      if (user === undefined) {
-        res.status(401).json({ message: "Not a valid user !" });
-        return;
-      }
-      res.json({
-        name: user.name,
-        isAdmin: user.is_admin,
-        employeeId: user.employee_id,
-      });
+  db.query("select * from management where username = $1", [
+    username.toLowerCase(),
+  ]).then((data) => {
+    const user = data[0];
+    if (user === undefined) {
+      res.status(401).json({ message: "Not a valid user !" });
+      return;
     }
-  );
+    res.json({
+      name: user.name,
+      isAdmin: user.is_admin,
+      employeeId: user.employee_id,
+    });
+  });
 };
 
 exports.managementLogin = (req, res, next) => {
   const { username, password } = req.body;
   db.query("select * from management where username = $1", [
-    username.toLowercase(),
+    username.toLowerCase(),
   ])
     .then((userData) => {
       const user = userData[0];
@@ -60,7 +60,7 @@ exports.managementLogin = (req, res, next) => {
 exports.getCustomerData = (req, res, next) => {
   const { email } = req.tokenData;
   db.query("select * from customer where email = $1", [
-    email.toLowercase(),
+    email.toLowerCase(),
   ]).then((data) => {
     const user = data[0];
     if (user === undefined) {
@@ -94,7 +94,7 @@ exports.createUser = (req, res, next) => {
     "insert into management (is_admin, username, name, government_id, age, password, address) values ($1, $2, $3, $4, $5, $6, $7)",
     [
       new_isAdmin,
-      new_username.toLowercase(),
+      new_username.toLowerCase(),
       new_name,
       new_governmentId,
       new_age,
@@ -113,7 +113,7 @@ exports.createUser = (req, res, next) => {
 exports.customerLogin = (req, res, next) => {
   const { email, password } = req.body;
   let user;
-  db.query("select * from customer where email = $1", [email.toLowercase()])
+  db.query("select * from customer where email = $1", [email.toLowerCase()])
     .then((data) => {
       user = data[0];
       if (user === undefined) {
@@ -129,7 +129,7 @@ exports.customerLogin = (req, res, next) => {
         res.status(401).json({ message: "Please enter valid password !" });
         throw new Error("password not match");
       }
-      const token = generateToken({ email: email.toLowercase() });
+      const token = generateToken({ email: email.toLowerCase() });
       res.json({
         token: token,
         isAuthenticated: true,
@@ -162,7 +162,7 @@ exports.createCustomer = (req, res, next) => {
       "insert into customer (contact_no, email, first_name, forget_question_answer, forget_question_type, last_name, password) values ($1, $2, $3, $4, $5, $6, $7)",
       [
         contactNo,
-        email.toLowercase(),
+        email.toLowerCase(),
         firstName,
         forgetQuestionAnswer,
         forgetQuestionType,
@@ -186,7 +186,7 @@ exports.forgetPassword = (req, res, next) => {
   const { email, forgetQuestionType, forgetQuestionAnswer } = req.body;
 
   db.query("select * from customer where email = $1", [
-    email.toLowercase(),
+    email.toLowerCase(),
   ]).then((data) => {
     const user = data[0];
     if (user === undefined) {
@@ -203,7 +203,7 @@ exports.forgetPassword = (req, res, next) => {
         return;
       }
       const token = generateToken({
-        email: user.email.toLowercase(),
+        email: user.email.toLowerCase(),
       });
       res.json({ token: token });
     }
@@ -216,7 +216,7 @@ exports.setNewPassword = (req, res, next) => {
 
   bcrypt.hash(password, 12).then((hashPassword) => {
     db.query("select * from customer where email = $1", [
-      email.toLowercase(),
+      email.toLowerCase(),
     ]).then((data) => {
       const user = data[0];
       if (user === undefined) {
@@ -225,7 +225,7 @@ exports.setNewPassword = (req, res, next) => {
       }
       db.query("update customer set password = $1 where email = $2", [
         hashPassword,
-        email.toLowercase(),
+        email.toLowerCase(),
       ]).then((data) => {
         res.json({ message: "Your password successfully reseted !" });
       });
@@ -237,7 +237,7 @@ exports.resetPassword = (req, res, next) => {
   const { currentPassword, newPassword } = req.body;
   const { email } = req.tokenData;
 
-  db.query("select * from customer where email = $1", [email.toLowercase()])
+  db.query("select * from customer where email = $1", [email.toLowerCase()])
     .then((data) => {
       const user = data[0];
       if (user === undefined) {
@@ -259,7 +259,7 @@ exports.resetPassword = (req, res, next) => {
     .then((hashPassword) => {
       return db.query("update customer set password = $1 where email = $2", [
         hashPassword,
-        email.toLowercase(),
+        email.toLowerCase(),
       ]);
     })
     .then((result) => {
