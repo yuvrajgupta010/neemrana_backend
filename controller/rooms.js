@@ -228,11 +228,13 @@ exports.getAvailableRoom = (req, res, next) => {
     [checkIn, checkOut]
   )
     .then((availableRooms) => {
+      console.log(availableRooms);
       const filtered = availableRooms.filter((room) => {
-        if (room.max_guests >= noOfChild + noOfAdult) {
+        if (room.max_guests >= Number(noOfChild) + Number(noOfAdult)) {
           return true;
         }
       });
+      console.log("filtered", filtered);
       const formatedData = filtered.map((room) => {
         return {
           category: room.category,
@@ -269,9 +271,9 @@ exports.bookRoom = (req, res, next) => {
       checkIn,
       checkOut,
       customerEmail,
-      noOfAdult,
-      noOfChild,
-      price,
+      Number(noOfAdult),
+      Number(noOfChild),
+      Number(price),
       roomNo,
       formatedDate,
       name,
