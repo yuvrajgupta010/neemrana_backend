@@ -24,5 +24,5 @@ app.use(authRoutes);
 app.use(roomRoutes);
 
 app.listen(PORT, () => {
-  console.log("I am ready!");
+  console.log(`I am ready on ${PORT}!`);
 });
