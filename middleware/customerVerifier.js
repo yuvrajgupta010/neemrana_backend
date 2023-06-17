@@ -7,7 +7,7 @@ exports.customerIsAuthenicated = (req, res, next) => {
     const extractedData = extractTokenData(authorizationToken);
     // console.log(extractedData);
     db.query("select * from customer where email = $1", [
-      extractedData.email,
+      extractedData.email.toLowerCase(),
     ]).then((data) => {
       const user = data[0];
       if (user === undefined) {
