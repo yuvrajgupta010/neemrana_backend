@@ -246,7 +246,6 @@ exports.getAvailableRoom = (req, res, next) => {
           price: room.price,
         };
       });
-      console.log(formatedData);
       res.json({ availableRooms: formatedData });
     })
     .catch((err) => {
